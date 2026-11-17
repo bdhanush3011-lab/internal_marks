@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vignan R22 Internal Marks Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f3fc;--card:rgba(255,255,255,.82);--solid:#fff;--text:#12163a;--muted:#5d6583;--faint:#8d94ae;--line:rgba(18,22,58,.09);--line2:rgba(18,22,58,.16);--field:#f5f6fd;--accent:#6d5efc;--bad:#dc2626;--ok:#15803d;--row:#fafbff;--lab:#eef1fc;--shadow:0 1px 2px rgba(18,22,58,.04),0 24px 50px -22px rgba(48,52,130,.35);--o1:#c4b5fd;--o2:#a5f3fc;--o3:#fbcfe8}
+@media(prefers-color-scheme:dark){:root{--bg:#0a0c19;--card:rgba(24,28,56,.7);--solid:#151935;--text:#eef0ff;--muted:#a3aacb;--faint:#6f77a0;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.18);--field:rgba(255,255,255,.06);--bad:#f87171;--ok:#4ade80;--row:rgba(255,255,255,.025);--lab:rgba(255,255,255,.05);--shadow:0 24px 50px -22px rgba(0,0,0,.75);--o1:#4c1d95;--o2:#0e7490;--o3:#9d174d}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,p{margin:0}button,input{font:inherit;color:inherit}button{cursor:pointer}
+.orbs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}.orbs i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55}
+.orbs i:nth-child(1){width:520px;height:520px;background:var(--o1);top:-160px;left:-120px}.orbs i:nth-child(2){width:460px;height:460px;background:var(--o2);top:30%;right:-160px}.orbs i:nth-child(3){width:440px;height:440px;background:var(--o3);bottom:-160px;left:25%}
+@media(prefers-color-scheme:dark){.orbs i{opacity:.32}}
+.wrap{max-width:1100px;margin:0 auto;padding:22px clamp(12px,4vw,32px) 50px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:40px;padding:0 16px;border-radius:12px;border:1px solid var(--line2);background:var(--solid);font-weight:600;font-size:13.5px;white-space:nowrap;transition:.15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px -10px rgba(48,52,130,.5)}
+.btn.pri{background:linear-gradient(135deg,#6d5efc,#8b5cf6);color:#fff;border-color:transparent;box-shadow:0 10px 22px -10px rgba(109,94,252,.85)}
+.btn.dng{color:var(--bad);background:transparent}.btn.dng:hover{background:color-mix(in srgb,var(--bad) 12%,transparent)}.btn.red{background:#ef4444;color:#fff;border-color:transparent}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
+
+/* AUTH */
+#auth{min-height:calc(100vh - 44px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px}
+.brand{text-align:center}
+.logo{width:64px;height:64px;margin:0 auto 14px;border-radius:20px;display:grid;place-items:center;font-weight:800;font-size:20px;color:#fff;background:linear-gradient(135deg,#6d5efc,#22d3ee);box-shadow:0 16px 34px -10px rgba(109,94,252,.7)}
+.brand h1{font-size:clamp(26px,5vw,34px);font-weight:800;letter-spacing:-.03em}.brand p{color:var(--muted);font-size:14.5px;margin-top:4px}
+.glass{background:var(--card);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow)}
+.abox{width:min(420px,100%);padding:26px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--field);padding:5px;border-radius:14px;margin-bottom:20px}
+.tabs button{height:38px;border:0;border-radius:10px;background:transparent;font-weight:700;font-size:13.5px;color:var(--muted)}.tabs button.on{background:var(--solid);color:var(--text);box-shadow:0 4px 12px -5px rgba(48,52,130,.4)}
+label.l{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:14px 0 6px}
+.in{position:relative}.in input{width:100%;height:46px;border:1.5px solid var(--line2);border-radius:13px;padding:0 44px 0 14px;font-size:15px;background:var(--field);transition:.15s}
+.in input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 20%,transparent);background:var(--solid)}
+.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;background:transparent;border-radius:10px;font-size:16px;opacity:.7}.eye:hover{background:var(--field);opacity:1}
+.abox .btn.pri{width:100%;height:48px;margin-top:20px;font-size:15px}
+.msg{font-size:13px;margin-top:12px;min-height:19px;color:var(--bad);font-weight:600}.msg.ok{color:var(--ok)}
+.hint{display:flex;gap:10px;margin-top:16px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--accent) 8%,transparent);border:1px solid color-mix(in srgb,var(--accent) 20%,transparent);font-size:12.3px;color:var(--muted);line-height:1.5}
+
+/* APP */
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.me{display:flex;align-items:center;gap:14px}.av{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;font-weight:800;font-size:21px;color:#fff;background:linear-gradient(135deg,#6d5efc,#22d3ee);box-shadow:0 12px 24px -10px rgba(109,94,252,.7)}
+.me h2{font-size:clamp(19px,3.4vw,25px);font-weight:800;letter-spacing:-.02em}.me p{font-size:13px;color:var(--muted)}
+.acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:700;padding:7px 12px;border-radius:999px;background:color-mix(in srgb,var(--ok) 13%,transparent);color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 30%,transparent)}.chip.w{background:color-mix(in srgb,#f59e0b 14%,transparent);color:#b45309;border-color:rgba(245,158,11,.4)}
+.formula{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);margin-bottom:18px}.formula b{color:var(--text)}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}@media(max-width:860px){.cards{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.cards{grid-template-columns:1fr}}
+.sc{position:relative;overflow:hidden;padding:18px;border-radius:22px;background:var(--card);border:1.5px solid var(--line);box-shadow:var(--shadow)}
+.sc:before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,var(--c),var(--c2))}
+.sc:after{content:'';position:absolute;width:160px;height:160px;right:-60px;top:-60px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--c) 24%,transparent),transparent 70%)}
+.sc .sn{font-size:12px;font-weight:800;color:#fff;display:inline-block;padding:5px 11px;border-radius:9px;background:linear-gradient(135deg,var(--c),var(--c2));position:relative;z-index:1}
+.sc .tt{margin-top:14px;display:flex;align-items:baseline;gap:5px;position:relative;z-index:1}.sc .tt b{font-size:38px;line-height:1;font-weight:800;letter-spacing:-.04em;color:var(--c)}.sc .tt span{color:var(--muted);font-weight:700}
+.sc .pb{height:8px;border-radius:99px;background:color-mix(in srgb,var(--c) 14%,transparent);margin:14px 0 10px;overflow:hidden;position:relative;z-index:1}.sc .pb i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--c),var(--c2));transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.sc small{font-size:12px;color:var(--muted);font-weight:600;position:relative;z-index:1}
+.tcard{overflow:hidden}.scroll{overflow-x:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;min-width:640px}
+thead th{padding:15px 8px;font-size:13px;font-weight:800;color:#fff;text-align:center;letter-spacing:.02em}
+thead th:first-child{text-align:left;padding-left:18px;width:170px;background:linear-gradient(135deg,#1e2fa0,#2540d0)}
+tbody th{text-align:left;font-size:13px;font-weight:700;padding:7px 18px;background:var(--lab);color:var(--text);white-space:nowrap;position:sticky;left:0;border-bottom:1px solid var(--line)}
+tbody th small{color:var(--faint);font-weight:600;margin-left:6px}
+tbody td{padding:6px;text-align:center;border-bottom:1px solid var(--line)}tbody tr:nth-child(even) td{background:var(--row)}
+td input{width:100%;max-width:118px;height:40px;border:1.5px solid var(--line2);border-radius:11px;text-align:center;font-size:15px;font-weight:700;background:var(--field);transition:.15s;-moz-appearance:textfield;appearance:textfield}
+td input::-webkit-outer-spin-button,td input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}td input::placeholder{color:var(--faint);font-weight:500}
+td input:focus{outline:0;border-color:var(--c);box-shadow:0 0 0 4px color-mix(in srgb,var(--c) 20%,transparent);background:var(--solid)}
+td input.f{border-color:color-mix(in srgb,var(--c) 55%,transparent);background:color-mix(in srgb,var(--c) 8%,var(--field))}td input.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+tr.res th,tr.res td{background:color-mix(in srgb,var(--accent) 9%,var(--solid))!important;font-weight:800}tr.res td{color:var(--c)}
+tr.total th,tr.total td{background:linear-gradient(135deg,#1e2fa0,#2540d0)!important;color:#fff!important;font-size:17px;font-weight:800;padding:14px 6px;border:0}
+.note{font-size:12.5px;color:var(--faint);margin-top:16px;text-align:center}
+
+/* modal + toast */
+.ov{position:fixed;inset:0;z-index:100;background:rgba(8,10,25,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px}
+.dlg{width:min(420px,100%);padding:26px;border-radius:24px;background:var(--solid);border:1px solid var(--line2);box-shadow:0 30px 70px -20px rgba(0,0,0,.55)}
+.dlg .ic{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;font-size:22px;background:color-mix(in srgb,var(--bad) 14%,transparent);margin-bottom:14px}
+.dlg h3{font-size:19px;font-weight:800}.dlg p{font-size:14px;color:var(--muted);margin-top:6px}
+.dlg .in{margin-top:14px}.da{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);opacity:0;z-index:200;padding:12px 18px;border-radius:14px;background:var(--text);color:var(--bg);font-size:13.5px;font-weight:600;box-shadow:0 16px 34px -12px rgba(0,0,0,.5);transition:.3s;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:560px){.btn.sm span{display:none}}
+</style>
+</head>
+<body>
+<div class="orbs" aria-hidden="true"><i></i><i></i><i></i></div>
+<main class="wrap">
+
+<!-- LOGIN / CREATE -->
+<section id="auth">
+  <div class="brand"><div class="logo">R22</div><h1>Internal Marks Calculator</h1><p>Vignan University · R22 Regulation</p></div>
+  <div class="glass abox">
+    <div class="tabs"><button id="tL" class="on" type="button">Login</button><button id="tC" type="button">Create account</button></div>
+    <label class="l" for="u">Username / ID</label>
+    <div class="in"><input id="u" maxlength="30" autocomplete="username" placeholder="e.g. 231fa04xyz"></div>
+    <label class="l" for="p">Password</label>
+    <div class="in"><input id="p" type="password" autocomplete="current-password" placeholder="Your password"><button class="eye" type="button" data-eye="p" aria-label="Show password">👁</button></div>
+    <div id="cw" hidden><label class="l" for="p2">Confirm password</label><div class="in"><input id="p2" type="password" autocomplete="new-password" placeholder="Repeat password"><button class="eye" type="button" data-eye="p2" aria-label="Show password">👁</button></div></div>
+    <button class="btn pri" id="go" type="button">Login</button>
+    <div class="msg" id="msg" aria-live="polite"></div>
+    <div class="hint"><span>🔒</span><span>Your marks are encrypted with your password and stay saved on this device, even after you log out. If you forget the password, the marks cannot be recovered.</span></div>
+  </div>
+</section>
+
+<!-- MARKS -->
+<section id="app" hidden>
+  <div class="top">
+    <div class="me"><div class="av" id="avatar">?</div><div><h2>Hi, <span id="who"></span> 👋</h2><p>Enter marks as they are announced. Blank is never counted as zero.</p></div></div>
+    <div class="acts"><span class="chip" id="stat">Saved</span><button id="out" class="btn pri sm" type="button">⎋ <span>Logout</span></button><button id="del" class="btn dng sm" type="button">🗑 <span>Delete account</span></button></div>
+  </div>
+  <div class="formula"><span><b>Module 1</b> = (FA-1 + FA-2 + CLA-1 avg + CLA-2 avg) ÷ 2</span>·<span><b>Module 2</b> = (FA-3 + FA-4 + CLA-3 avg + CLA-4 avg) ÷ 2</span>·<span><b>Total</b> = M1 + M2 + CLA-5</span></div>
+  <div class="cards" id="cards"></div>
+  <div class="glass tcard"><div class="scroll"><table><thead id="thead"></thead><tbody id="body"></tbody></table></div></div>
+  <p class="note">🔒 Saved encrypted on this device. You are logged out automatically after 10 minutes of inactivity. Always verify final marks on the official university portal.</p>
+</section>
+
+</main>
+
+<div class="ov" id="ov" hidden><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="dt">
+  <div class="ic">🗑</div><h3 id="dt">Delete account?</h3>
+  <p>This permanently removes <b id="dn"></b> and all saved marks from this device. Type your password to confirm.</p>
+  <div class="in"><input id="dp" type="password" autocomplete="current-password" placeholder="Password"></div>
+  <div class="msg" id="dm"></div>
+  <div class="da"><button class="btn" id="dc" type="button">Cancel</button><button class="btn red" id="dok" type="button">Delete forever</button></div>
+</div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const UK='r22-users-v1';
+const enc=new TextEncoder(),dec=new TextDecoder();
+const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+let memStore=null,persistent=true;
+const users=()=>{try{if(memStore)return memStore;return JSON.parse(localStorage.getItem(UK))||{}}catch(e){return memStore||{}}};
+const putUsers=u=>{try{localStorage.setItem(UK,JSON.stringify(u));memStore=null}catch(e){memStore=u;persistent=false}};
+async function derive(pw,salt){const k=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function seal(key,obj){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(JSON.stringify(obj)));
+  const o=new Uint8Array(12+ct.byteLength);o.set(iv);o.set(new Uint8Array(ct),12);return b64(o)}
+async function openBox(key,s){const b=unb64(s);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b.slice(0,12)},key,b.slice(12));return JSON.parse(dec.decode(pt))}
+
+let toastT;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),2600)}
+
+/* ---------- auth ---------- */
+let mode='L',session=null,idle;
+const msg=(t,ok)=>{const m=$('#msg');m.textContent=t;m.className='msg'+(ok?' ok':'')};
+function setMode(m){mode=m;$('#tL').classList.toggle('on',m==='L');$('#tC').classList.toggle('on',m==='C');$('#cw').hidden=m==='L';
+  $('#go').textContent=m==='L'?'Login':'Create account';$('#p').autocomplete=m==='L'?'current-password':'new-password';msg('')}
+$('#tL').onclick=()=>setMode('L');$('#tC').onclick=()=>setMode('C');
+document.querySelectorAll('.eye').forEach(b=>b.onclick=()=>{const i=$('#'+b.dataset.eye);i.type=i.type==='password'?'text':'password'});
+
+async function submitForm(){
+  msg('Please wait…',true);
+  if(!window.crypto||!crypto.subtle){msg('Secure login is not available here. Open this file over https (or localhost), or directly in Chrome/Edge.');return}
+  const name=$('#u').value.trim().toLowerCase(),pw=$('#p').value,all=users();
+  if(!name||!pw){msg('Enter username and password');return}
+  $('#go').disabled=true;
+  try{
+    if(mode==='C'){
+      if(all[name]){msg('That ID already exists. Choose another or login.');return}
+      if(pw.length<6){msg('Password must be at least 6 characters');return}
+      if(pw!==$('#p2').value){msg('Passwords do not match');return}
+      const salt=crypto.getRandomValues(new Uint8Array(16)),key=await derive(pw,salt);
+      all[name]={salt:b64(salt),data:await seal(key,{m:{}})};putUsers(all);
+      startSession(name,key,{m:{}});toast('Account created 🎉');
+    }else{
+      const rec=all[name];
+      if(!rec){msg('Wrong ID or password');return}
+      const key=await derive(pw,unb64(rec.salt));
+      let data;try{data=await openBox(key,rec.data)}catch(err){msg('Wrong ID or password');return}
+      startSession(name,key,data);toast('Welcome back, '+name);
+    }
+  }catch(err){msg('Error: '+(err&&err.message?err.message:err))}
+  finally{$('#go').disabled=false}
+}
+$('#go').addEventListener('click',submitForm);
+['u','p','p2'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitForm()}}));
+window.addEventListener('unhandledrejection',e=>msg('Error: '+(e.reason&&e.reason.message||e.reason)));
+
+/* ---------- table ---------- */
+const SUBJ=[['DL','#7c5cff','#c084fc'],['WT','#06b6d4','#38bdf8'],['CV','#ec4899','#fb7185'],['MLOAAIE','#3b82f6','#818cf8']];
+const MAX={FA1:10,FA2:20,FA3:10,FA4:20,C11:10,C12:10,C21:10,C22:10,C31:10,C32:10,C41:10,C42:10,C5:10};
+const ROWS=[['FA1','FA-1','/10'],['FA2','FA-2','/20'],['FA3','FA-3','/10'],['FA4','FA-4','/20'],['C11','CLA-1 : 1','/10'],['C12','CLA-1 : 2','/10'],['C21','CLA-2 : 1','/10'],['C22','CLA-2 : 2','/10'],['C31','CLA-3 : 1','/10'],['C32','CLA-3 : 2','/10'],['C41','CLA-4 : 1','/10'],['C42','CLA-4 : 2','/10'],['C5','CLA-5','/10']];
+$('#thead').innerHTML='<tr><th>Exam</th>'+SUBJ.map(s=>`<th style="background:linear-gradient(135deg,${s[1]},${s[2]})">${s[0]}</th>`).join('')+'</tr>';
+let h='';
+ROWS.forEach(([k,l,m])=>{h+=`<tr><th>${l}<small>${m}</small></th>`;SUBJ.forEach((s,i)=>h+=`<td style="--c:${s[1]}"><input type="number" inputmode="decimal" min="0" max="${MAX[k]}" step="any" autocomplete="off" data-s="${i}" data-k="${k}" placeholder="—" aria-label="${s[0]} ${l}"></td>`);h+='</tr>'});
+[['m1','Module 1','/25','res'],['m2','Module 2','/25','res'],['t','Internal Total','/60','total']].forEach(([id,l,m,c])=>{h+=`<tr class="${c}"><th>${l}<small>${m}</small></th>`+SUBJ.map((s,i)=>`<td id="${id}-${i}" style="--c:${s[1]}">—</td>`).join('')+'</tr>'});
+$('#body').innerHTML=h;
+$('#cards').innerHTML=SUBJ.map((s,i)=>`<div class="sc" style="--c:${s[1]};--c2:${s[2]}"><span class="sn">${s[0]}</span><div class="tt"><b id="ct-${i}">0</b><span>/ 60</span></div><div class="pb"><i id="cb-${i}"></i></div><small id="cs-${i}">No marks yet</small></div>`).join('');
+
+const fmt=n=>String(Math.round(n*100)/100);
+const inp=(s,k)=>document.querySelector(`input[data-s="${s}"][data-k="${k}"]`);
+function val(s,k){const el=inp(s,k);if(el.value===''){el.classList.remove('bad','f');return null}const n=Number(el.value),bad=!Number.isFinite(n)||n<0||n>MAX[k];el.classList.toggle('bad',bad);el.classList.toggle('f',!bad);return bad?null:n}
+const avg=(a,b)=>a!=null&&b!=null?(a+b)/2:null;
+function calc(){for(let s=0;s<4;s++){const g=k=>val(s,k);
+  const m1u=[g('FA1'),g('FA2'),avg(g('C11'),g('C12')),avg(g('C21'),g('C22'))],m2u=[g('FA3'),g('FA4'),avg(g('C31'),g('C32')),avg(g('C41'),g('C42'))];
+  const sum=a=>a.reduce((x,y)=>x+(y==null?0:y),0)/2,any=a=>a.some(x=>x!=null),c5=g('C5');
+  const m1=sum(m1u),m2=sum(m2u),a1=any(m1u),a2=any(m2u),tot=m1+m2+(c5||0),has=a1||a2||c5!=null;
+  $('#m1-'+s).textContent=a1?fmt(m1):'—';$('#m2-'+s).textContent=a2?fmt(m2):'—';$('#t-'+s).textContent=has?fmt(tot):'—';
+  $('#ct-'+s).textContent=has?fmt(tot):'0';$('#cb-'+s).style.width=Math.min(100,tot/.6)+'%';
+  $('#cs-'+s).textContent=has?`M1 ${a1?fmt(m1):'—'} · M2 ${a2?fmt(m2):'—'} · CLA-5 ${c5!=null?fmt(c5):'—'}`:'No marks yet'}}
+
+/* ---------- session + saving ---------- */
+function setStat(t,warn){const c=$('#stat');c.textContent=t;c.classList.toggle('w',!!warn)}
+function startSession(name,key,data){
+  session={name,key,data};
+  $('#auth').hidden=true;$('#app').hidden=false;$('#who').textContent=name;$('#avatar').textContent=(name[0]||'?').toUpperCase();
+  document.querySelectorAll('#body input').forEach(i=>i.value=data.m[i.dataset.s+'|'+i.dataset.k]??'');
+  calc();bump();['u','p','p2'].forEach(id=>$('#'+id).value='');msg('');
+  persistent?setStat('🔒 Saved'):setStat('Preview mode: not kept after closing',true);
+  window.scrollTo(0,0);
+}
+function endSession(){
+  clearTimeout(idle);session=null;
+  document.querySelectorAll('#body input').forEach(i=>{i.value='';i.classList.remove('bad','f')});calc();
+  $('#app').hidden=true;$('#auth').hidden=false;setMode('L');
+}
+const bump=()=>{clearTimeout(idle);if(session)idle=setTimeout(()=>{endSession();msg('Logged out due to inactivity')},10*60*1000)};
+let chain=Promise.resolve();
+function save(){chain=chain.then(async()=>{
+  if(!session)return;const s=session,all=users();if(!all[s.name])return;
+  all[s.name].data=await seal(s.key,s.data);putUsers(all);
+  persistent?setStat('🔒 Saved'):setStat('Preview mode: not kept after closing',true)}).catch(e=>setStat('Save failed',true));return chain}
+document.addEventListener('input',e=>{
+  const t=e.target;if(!t.matches('#body input'))return;
+  calc();bump();
+  if(session){session.data.m[t.dataset.s+'|'+t.dataset.k]=t.value;setStat('Saving…');save()}
+});
+['mousemove','keydown','touchstart','click'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+$('#out').onclick=async()=>{await save();endSession();toast('Logged out. Your marks stay saved.')};
+
+/* ---------- delete account (custom dialog, works everywhere) ---------- */
+const ov=$('#ov'),dm=m=>{$('#dm').textContent=m};
+$('#del').onclick=()=>{if(!session)return;$('#dn').textContent=session.name;$('#dp').value='';dm('');ov.hidden=false;setTimeout(()=>$('#dp').focus(),50)};
+const closeDlg=()=>{ov.hidden=true;$('#dp').value=''};
+$('#dc').onclick=closeDlg;ov.addEventListener('click',e=>{if(e.target===ov)closeDlg()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!ov.hidden)closeDlg()});
+$('#dp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doDelete()}});
+$('#dok').onclick=doDelete;
+async function doDelete(){
+  if(!session)return;const pw=$('#dp').value;if(!pw){dm('Enter your password');return}
+  $('#dok').disabled=true;dm('');
+  try{
+    const all=users(),rec=all[session.name];
+    if(rec){const key=await derive(pw,unb64(rec.salt));try{await openBox(key,rec.data)}catch(e){dm('Wrong password');return}}
+    const name=session.name;delete all[name];putUsers(all);
+    closeDlg();endSession();msg('Account "'+name+'" deleted',true);toast('Account deleted');
+  }catch(err){dm('Error: '+(err&&err.message||err))}
+  finally{$('#dok').disabled=false}
+}
+</script>
+</body>
+</html>
